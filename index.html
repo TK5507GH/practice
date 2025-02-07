@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fuel Efficiency Calculator</title>
     <style>
-        /* ダークテーマの全体設定 */
+        /* ダークテーマ設定 */
         body { 
             font-family: 'Arial', sans-serif; 
             text-align: center; 
             margin: 0;
             padding: 0;
-            background-color: #121212; /* 背景をダークグレー */
-            color: #e0e0e0; /* テキストを明るめのグレー */
+            background-color: #121212; 
+            color: #e0e0e0; 
         }
 
         h1, h3 {
@@ -20,18 +20,16 @@
             color: #ffffff;
         }
 
-        /* メインコンテナ */
         .container {
             max-width: 400px;
             margin: auto;
             padding: 20px;
-            background: #1e1e1e; /* より明るいグレーの背景 */
+            background: #1e1e1e;
             border-radius: 10px;
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.1); /* わずかに光を当てる */
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
         }
 
-        /* フォーム入力とボタン */
-        label, input, button {
+        label, input, select, button {
             display: block;
             width: 100%;
             font-size: 18px;
@@ -40,7 +38,7 @@
             box-sizing: border-box;
         }
 
-        input {
+        input, select {
             background: #333;
             color: #e0e0e0;
             border: 1px solid #555;
@@ -64,10 +62,9 @@
             font-size: 22px;
             font-weight: bold;
             margin-top: 15px;
-            color: #90caf9; /* 青みがかったアクセント */
+            color: #90caf9;
         }
 
-        /* 履歴表示のデザイン */
         #history {
             margin-top: 20px;
             text-align: left;
@@ -84,7 +81,6 @@
             color: #90caf9;
         }
 
-        /* ダークボタン */
         .clear-btn {
             background: #ff3b3b;
             transition: background 0.3s ease;
@@ -94,14 +90,13 @@
             background: #b22222;
         }
 
-        /* スマホ向けの調整 */
         @media (max-width: 600px) {
             .container {
                 width: 90%;
                 padding: 15px;
             }
 
-            label, input, button {
+            label, input, select, button {
                 font-size: 16px;
             }
 
@@ -115,9 +110,19 @@
 
     <div class="container">
         <h1>Fuel Efficiency Calculator</h1>
-        <label>Fuel Amount (L): <input type="number" id="fuel" placeholder="e.g., 40"></label>
-        <label>Distance Traveled (km): <input type="number" id="distance" placeholder="e.g., 500"></label>
+        
+        <!-- 単位の選択 -->
+        <label>Select Unit:</label>
+        <select id="unit">
+            <option value="kmL">km/L (Kilometers per Liter)</option>
+            <option value="mpg">MPG (Miles per Gallon)</option>
+        </select>
+
+        <!-- 入力フィールド -->
+        <label>Fuel Amount: <input type="number" id="fuel" placeholder="Enter fuel amount"></label>
+        <label>Distance Traveled: <input type="number" id="distance" placeholder="Enter distance"></label>
         <button onclick="calculate()">Calculate</button>
+        
         <h2 id="result"></h2>
 
         <h3>History</h3>
@@ -129,15 +134,28 @@
         function calculate() {
             let fuel = parseFloat(document.getElementById("fuel").value);
             let distance = parseFloat(document.getElementById("distance").value);
+            let unit = document.getElementById("unit").value;
+
             if (fuel > 0 && distance > 0) {
-                let efficiency = distance / fuel;
-                let resultText = `Fuel Efficiency: ${efficiency.toFixed(2)} km/L`;
+                let efficiency;
+                let resultText;
+
+                if (unit === "kmL") {
+                    efficiency = distance / fuel;
+                    resultText = `Fuel Efficiency: ${efficiency.toFixed(2)} km/L`;
+                } else if (unit === "mpg") {
+                    let miles = distance * 0.621371; // km to miles
+                    let gallons = fuel * 0.264172;  // liters to gallons
+                    efficiency = miles / gallons;
+                    resultText = `Fuel Efficiency: ${efficiency.toFixed(2)} MPG`;
+                }
+
                 document.getElementById("result").innerText = resultText;
 
                 // Save to history
                 let history = JSON.parse(localStorage.getItem("history")) || [];
                 let now = new Date().toLocaleString();
-                history.unshift({ date: now, efficiency: efficiency.toFixed(2) });
+                history.unshift({ date: now, efficiency: efficiency.toFixed(2), unit: unit });
 
                 // Keep only the last 5 records
                 localStorage.setItem("history", JSON.stringify(history.slice(0, 5)));
@@ -154,8 +172,9 @@
             let historyList = document.getElementById("history");
             historyList.innerHTML = "";
             history.forEach(entry => {
+                let unitText = entry.unit === "kmL" ? "km/L" : "MPG";
                 let li = document.createElement("li");
-                li.innerText = `${entry.date} - ${entry.efficiency} km/L`;
+                li.innerText = `${entry.date} - ${entry.efficiency} ${unitText}`;
                 historyList.appendChild(li);
             });
         }
