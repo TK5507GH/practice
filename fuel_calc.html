@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>燃費計算アプリ</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            text-align: center; 
+            margin: 0;
+            padding: 0;
+            background-color: #f8f8f8;
+        }
+
+        h1, h3 {
+            margin-top: 20px;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: auto;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label, input, button {
+            display: block;
+            width: 100%;
+            font-size: 18px;
+            margin: 10px 0;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        input {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        #result {
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        #history {
+            margin-top: 20px;
+            text-align: left;
+            padding: 0;
+        }
+
+        li {
+            list-style: none;
+            background: #f1f1f1;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        /* スマホ向けの調整 */
+        @media (max-width: 600px) {
+            .container {
+                width: 90%;
+                padding: 15px;
+            }
+
+            label, input, button {
+                font-size: 16px;
+            }
+
+            #result {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>燃費計算アプリ</h1>
+        <label>給油量 (L): <input type="number" id="fuel" placeholder="例: 40"></label>
+        <label>走行距離 (km): <input type="number" id="distance" placeholder="例: 500"></label>
+        <button onclick="calculate()">計算</button>
+        <h2 id="result"></h2>
+
+        <h3>履歴</h3>
+        <ul id="history"></ul>
+        <button onclick="clearHistory()">履歴をクリア</button>
+    </div>
+
+    <script>
+        function calculate() {
+            let fuel = parseFloat(document.getElementById("fuel").value);
+            let distance = parseFloat(document.getElementById("distance").value);
+            if (fuel > 0 && distance > 0) {
+                let efficiency = distance / fuel;
+                let resultText = `燃費: ${efficiency.toFixed(2)} km/L`;
+                document.getElementById("result").innerText = resultText;
+
+                // 履歴に追加
+                let history = JSON.parse(localStorage.getItem("history")) || [];
+                let now = new Date().toLocaleString();
+                history.unshift({ date: now, efficiency: efficiency.toFixed(2) });
+
+                // 最新の履歴を保存（最大5件まで）
+                localStorage.setItem("history", JSON.stringify(history.slice(0, 5)));
+
+                // 履歴を表示
+                displayHistory();
+            } else {
+                document.getElementById("result").innerText = "正しい数値を入力してください";
+            }
+        }
+
+        function displayHistory() {
+            let history = JSON.parse(localStorage.getItem("history")) || [];
+            let historyList = document.getElementById("history");
+            historyList.innerHTML = "";
+            history.forEach(entry => {
+                let li = document.createElement("li");
+                li.innerText = `${entry.date} - ${entry.efficiency} km/L`;
+                historyList.appendChild(li);
+            });
+        }
+
+        function clearHistory() {
+            localStorage.removeItem("history");
+            displayHistory();
+        }
+
+        // ページ読み込み時に履歴を表示
+        window.onload = displayHistory;
+    </script>
+
+</body>
+</html>
