@@ -1,42 +1,49 @@
 <!DOCTYPE html>
-<html lang="en"> <!-- 言語を英語に変更 -->
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fuel Efficiency Calculator</title> <!-- タイトルも英語に変更 -->
+    <title>Fuel Efficiency Calculator</title>
     <style>
+        /* ダークテーマの全体設定 */
         body { 
-            font-family: Arial, sans-serif; 
+            font-family: 'Arial', sans-serif; 
             text-align: center; 
             margin: 0;
             padding: 0;
-            background-color: #f8f8f8;
+            background-color: #121212; /* 背景をダークグレー */
+            color: #e0e0e0; /* テキストを明るめのグレー */
         }
 
         h1, h3 {
             margin-top: 20px;
+            color: #ffffff;
         }
 
+        /* メインコンテナ */
         .container {
             max-width: 400px;
             margin: auto;
             padding: 20px;
-            background: white;
+            background: #1e1e1e; /* より明るいグレーの背景 */
             border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.1); /* わずかに光を当てる */
         }
 
+        /* フォーム入力とボタン */
         label, input, button {
             display: block;
             width: 100%;
             font-size: 18px;
             margin: 10px 0;
-            padding: 10px;
+            padding: 12px;
             box-sizing: border-box;
         }
 
         input {
-            border: 1px solid #ccc;
+            background: #333;
+            color: #e0e0e0;
+            border: 1px solid #555;
             border-radius: 5px;
         }
 
@@ -46,6 +53,7 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            transition: background 0.3s ease;
         }
 
         button:hover {
@@ -53,11 +61,13 @@
         }
 
         #result {
-            font-size: 20px;
+            font-size: 22px;
             font-weight: bold;
             margin-top: 15px;
+            color: #90caf9; /* 青みがかったアクセント */
         }
 
+        /* 履歴表示のデザイン */
         #history {
             margin-top: 20px;
             text-align: left;
@@ -66,14 +76,25 @@
 
         li {
             list-style: none;
-            background: #f1f1f1;
-            padding: 10px;
+            background: #222;
+            padding: 12px;
             margin: 5px 0;
             border-radius: 5px;
             font-size: 16px;
+            color: #90caf9;
         }
 
-        /* Mobile responsive */
+        /* ダークボタン */
+        .clear-btn {
+            background: #ff3b3b;
+            transition: background 0.3s ease;
+        }
+
+        .clear-btn:hover {
+            background: #b22222;
+        }
+
+        /* スマホ向けの調整 */
         @media (max-width: 600px) {
             .container {
                 width: 90%;
@@ -93,7 +114,7 @@
 <body>
 
     <div class="container">
-        <h1>Fuel Efficiency Calculator</h1> <!-- 見出しを英語に -->
+        <h1>Fuel Efficiency Calculator</h1>
         <label>Fuel Amount (L): <input type="number" id="fuel" placeholder="e.g., 40"></label>
         <label>Distance Traveled (km): <input type="number" id="distance" placeholder="e.g., 500"></label>
         <button onclick="calculate()">Calculate</button>
@@ -101,7 +122,7 @@
 
         <h3>History</h3>
         <ul id="history"></ul>
-        <button onclick="clearHistory()">Clear History</button>
+        <button class="clear-btn" onclick="clearHistory()">Clear History</button>
     </div>
 
     <script>
